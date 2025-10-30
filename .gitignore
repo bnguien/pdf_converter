@@ -1,0 +1,20 @@
+# IntelliJ IDEA
+.idea/
+
+# VS Code
+.vscode/
+
+# Maven / Java build
+target/
+out/
+
+# Tomcat temporary files
+tomcat/
+work/
+logs/
+
+# OS / System
+*.log
+*.tmp
+*.bak
+*.DS_Store
