@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #fdfafa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.converter {
+    width: 90%;
+    max-width: 900px;
+    background-color: #fff;
+    border: 2px dashed #f5b5b0;
+    border-radius: 25px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: rgba(192, 50, 45, 0.05) 0px 4px 20px;
+}
+
+.converter_header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.converter_icon {
+    background-color: #c0322d;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 20px;
+}
+
+.converter_title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.converter_subtitle {
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 4px;
+}
+
+.converter_btn {
+    margin-top: 25px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 60px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.converter_btn:hover {
+    background-color: #fc480b;
+    transform: translateY(-2px);
+}
+
+.converter_sources {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.converter_source {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.converter_source:hover {
+    background-color: #f8f8f8;
+    color: #c0322d;
+    border-color: #c0322d;
+}

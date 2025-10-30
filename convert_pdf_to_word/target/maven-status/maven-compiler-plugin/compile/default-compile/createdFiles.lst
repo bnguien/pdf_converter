@@ -1,0 +1,11 @@
+controller\LoginController.class
+model\bean\User.class
+model\dao\DBConnection.class
+model\dao\UserDAO.class
+model\bo\UserBO.class
+controller\RegisterController.class
+model\bean\Log.class
+controller\LogoutController.class
+model\bean\Task.class
+model\bo\TaskBO.class
+model\bo\LogBO.class
