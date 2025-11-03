@@ -4,22 +4,91 @@
 <head>
     <meta charset="UTF-8">
     <title>Register - PDF Converter</title>
-    <link rel="stylesheet" href="styles1.css">
+    <link rel="stylesheet" href="css/styles1.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
     <link rel="icon" href="logo.png" type="image/png">
-    <link rel="stylesheet" href="css/styles1.css">
+    <style>
+        .alert-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(400px);
+            }
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #c0322d;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
-
-<% if (request.getParameter("error") != null) { %>
-<div class="alert alert-danger text-center fw-bold mt-3" role="alert">
-    Email already exists! Please try another.
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
 </div>
-<% } else if (request.getParameter("mismatch") != null) { %>
-<div class="alert alert-warning text-center fw-bold mt-3" role="alert">
-    Passwords do not match!
+<% if (request.getParameter("error") != null) { %>
+<div class="alert alert-danger alert-toast alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-circle me-2"></i>
+    Email đã tồn tại! Vui lòng thử email khác.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+<% if (request.getParameter("mismatch") != null) { %>
+<div class="alert alert-warning alert-toast alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    Mật khẩu không khớp! Vui lòng kiểm tra lại.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<% } %>
+<% if (request.getParameter("format_error") != null) { %>
+<div class="alert alert-danger alert-toast alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-circle me-2"></i>
+    <% if ("email".equals(request.getParameter("format_error"))) { %>
+        Email không hợp lệ!
+    <% } else if ("password".equals(request.getParameter("format_error"))) { %>
+        Mật khẩu yếu! Mật khẩu phải có tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký hiệu đặc biệt.
+    <% } else { %>
+        Vui lòng điền đầy đủ thông tin!
+    <% } %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <% } %>
 
@@ -48,21 +117,26 @@
             </div>
 
             <div class="form-floating mb-3 position-relative">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required 
+                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$">
                 <label for="password">Mật khẩu</label>
                 <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-3 border-0 bg-transparent"
                         onclick="togglePassword()">
                     <i class="fa-solid fa-eye" id="toggleIcon"></i>
                 </button>
+                <div id="password-feedback" class="invalid-feedback" style="display: block; font-size: 0.875rem;"></div>
+                <small class="form-text text-muted">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký hiệu đặc biệt (@$!%*?&)</small>
             </div>
 
             <div class="form-floating mb-3">
                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
                 <label for="confirmPassword">Xác nhận mật khẩu</label>
+                <div id="confirm-password-feedback" class="invalid-feedback" style="display: block; font-size: 0.875rem;"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                Đăng ký
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="submitBtn">
+                <span id="submitText">Đăng ký</span>
+                <span id="submitSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
             </button>
             <div class="text-center my-3 text-muted">Hoặc tiếp tục với</div>
 
@@ -87,15 +161,118 @@
 </div>
 
 <script>
+    // Regex cho Mật khẩu: Tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường, số, và ký hiệu đặc biệt.
+    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
     function validatePasswords() {
         const pass = document.getElementById("password").value;
         const confirm = document.getElementById("confirmPassword").value;
-        if (pass !== confirm) {
-            alert("Passwords do not match!");
+        const passwordFeedback = document.getElementById("password-feedback");
+        const confirmFeedback = document.getElementById("confirm-password-feedback");
+        
+        // Reset feedback
+        passwordFeedback.textContent = '';
+        confirmFeedback.textContent = '';
+        document.getElementById("password").classList.remove('is-invalid', 'is-valid');
+        document.getElementById("confirmPassword").classList.remove('is-invalid', 'is-valid');
+        
+        let isValid = true;
+        
+        // Kiểm tra mật khẩu trống
+        if (!pass || pass.trim() === '') {
+            passwordFeedback.textContent = 'Vui lòng nhập mật khẩu!';
+            document.getElementById("password").classList.add('is-invalid');
+            isValid = false;
+        }
+        // Kiểm tra độ mạnh mật khẩu
+        else if (!PASSWORD_REGEX.test(pass)) {
+            passwordFeedback.textContent = 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký hiệu đặc biệt (@$!%*?&)!';
+            document.getElementById("password").classList.add('is-invalid');
+            isValid = false;
+        } else {
+            document.getElementById("password").classList.add('is-valid');
+        }
+        
+        // Kiểm tra xác nhận mật khẩu
+        if (!confirm || confirm.trim() === '') {
+            confirmFeedback.textContent = 'Vui lòng xác nhận mật khẩu!';
+            document.getElementById("confirmPassword").classList.add('is-invalid');
+            isValid = false;
+        } else if (pass !== confirm) {
+            confirmFeedback.textContent = 'Mật khẩu xác nhận không khớp!';
+            document.getElementById("confirmPassword").classList.add('is-invalid');
+            isValid = false;
+        } else if (pass === confirm && pass.trim() !== '') {
+            document.getElementById("confirmPassword").classList.add('is-valid');
+        }
+        
+        if (!isValid) {
+            // Scroll to first error
+            const firstInvalid = document.querySelector('.is-invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalid.focus();
+            }
             return false;
         }
+        
+        showLoading();
         return true;
     }
+    
+    // Real-time validation khi user nhập
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+        const passwordFeedback = document.getElementById("password-feedback");
+        const confirmFeedback = document.getElementById("confirm-password-feedback");
+        
+        function validatePasswordRealTime() {
+            const pass = passwordInput.value;
+            
+            if (pass.length === 0) {
+                passwordInput.classList.remove('is-invalid', 'is-valid');
+                passwordFeedback.textContent = '';
+                return;
+            }
+            
+            if (!PASSWORD_REGEX.test(pass)) {
+                passwordInput.classList.remove('is-valid');
+                passwordInput.classList.add('is-invalid');
+                passwordFeedback.textContent = 'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký hiệu đặc biệt (@$!%*?&)!';
+            } else {
+                passwordInput.classList.remove('is-invalid');
+                passwordInput.classList.add('is-valid');
+                passwordFeedback.textContent = '';
+            }
+        }
+        
+        function validateConfirmPasswordRealTime() {
+            const pass = passwordInput.value;
+            const confirm = confirmPasswordInput.value;
+            
+            if (confirm.length === 0) {
+                confirmPasswordInput.classList.remove('is-invalid', 'is-valid');
+                confirmFeedback.textContent = '';
+                return;
+            }
+            
+            if (pass !== confirm) {
+                confirmPasswordInput.classList.remove('is-valid');
+                confirmPasswordInput.classList.add('is-invalid');
+                confirmFeedback.textContent = 'Mật khẩu xác nhận không khớp!';
+            } else if (pass === confirm && pass.trim() !== '') {
+                confirmPasswordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.add('is-valid');
+                confirmFeedback.textContent = '';
+            }
+        }
+        
+        passwordInput.addEventListener('input', validatePasswordRealTime);
+        passwordInput.addEventListener('blur', validatePasswordRealTime);
+        confirmPasswordInput.addEventListener('input', validateConfirmPasswordRealTime);
+        confirmPasswordInput.addEventListener('blur', validateConfirmPasswordRealTime);
+    });
 
     function togglePassword() {
         const pass = document.getElementById("password");
@@ -110,7 +287,27 @@
             icon.classList.add("fa-eye");
         }
     }
+    
+    function showLoading() {
+        document.getElementById("loadingOverlay").style.display = "flex";
+        const submitBtn = document.getElementById("submitBtn");
+        const submitText = document.getElementById("submitText");
+        const submitSpinner = document.getElementById("submitSpinner");
+        submitBtn.disabled = true;
+        submitText.textContent = "Đang xử lý...";
+        submitSpinner.classList.remove("d-none");
+    }
+    
+    // Auto-hide alerts after 3 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll(".alert-toast");
+        alerts.forEach(function(alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 3000);
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

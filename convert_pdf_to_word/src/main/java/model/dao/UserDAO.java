@@ -54,17 +54,4 @@ public class UserDAO {
         }
         return Optional.empty();
     }
-
-    public boolean login(String email, String password){
-        String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, email);
-            ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

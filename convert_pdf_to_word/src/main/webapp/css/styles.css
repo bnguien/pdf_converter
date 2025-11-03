@@ -138,6 +138,120 @@ body {
 .hero p{
     margin: 1rem 0;
 }
+/* ===== MAIN AFTER LOGGING IN ====*/ 
+.alert-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+}
+.user-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    animation: fadeInUp 0.5s ease-out;
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c0322d 0%, #ff6b5b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0 auto 20px;
+}
+.user-info h3 {
+    color: #222;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.user-info-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 10px;
+}
+.user-info-item:last-child {
+    border-bottom: none;
+}
+.user-info-label {
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.user-info-value {
+    color: #222;
+    font-weight: 500;
+}
+.role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #c0322d;
+    color: white;
+}
+.welcome-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+.welcome-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c0322d 0%, #ff6b5b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
 /* ===== CONVERTER BOX ===== */
 .converter {
     background-color: #fff;
@@ -148,6 +262,7 @@ body {
     max-width: 900px;
     text-align: center;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    margin: 50px;
 }
 
 .converter h2 {
