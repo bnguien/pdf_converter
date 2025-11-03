@@ -18,3 +18,4 @@ logs/
 *.tmp
 *.bak
 *.DS_Store
+convert_pdf_to_word/target/convert_pdf_to_word/WEB-INF/classes/model/bo/UserBO.class
