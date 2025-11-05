@@ -89,17 +89,16 @@
   </dependencies>
 
   <build>
-    <finalName>convert_pdf_to_word</finalName>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
-        <configuration>
-          <source>21</source>
-          <target>21</target>
-          <release>21</release>
-        </configuration>
-      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.11.0</version>
+            <configuration>
+                <release>21</release>
+            </configuration>
+        </plugin>
     </plugins>
-  </build>
+</build>
+
 </project>
