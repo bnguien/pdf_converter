@@ -64,7 +64,25 @@ body {
     font-size: 14px;
     font-weight: 400;
 }
+.register-container {
+    min-height: 100vh;             
+    display: flex;
+    justify-content: center;       
+    align-items: center;           
+    background: #fdf9f9;         
+    padding: 20px;
+}
 
+.register-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 48px 40px;
+    box-shadow: 0 2px 4px rgba(192, 50, 45, 0.05),
+                0 8px 16px rgba(192, 50, 45, 0.08);
+    border: 1px solid rgba(192, 50, 45, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
 /* Input */
 .input-group {
     position: relative;
@@ -138,25 +156,26 @@ body {
 /* Password Toggle */
 .password-toggle {
     position: absolute;
-    right: 12px;
-    top: 50%;
+    right: 14px;
+    top: 30%;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
     color: #a36a6a;
-    padding: 6px;
-    border-radius: 4px;
-    transition: color 0.2s ease;
+    padding: 0;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    transition: color 0.2s ease;
 }
 
 .password-toggle:hover {
     color: #c0322d;
 }
-
 /* Options */
 .form-options {
     display: flex;

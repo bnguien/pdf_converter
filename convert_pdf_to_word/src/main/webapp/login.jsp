@@ -1,183 +1,141 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - PDF Converter</title>
-    <link rel="stylesheet" href="css/styles1.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="icon" href="logo.png" type="image/png">
-    <style>
-        .alert-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            min-width: 300px;
-            z-index: 9999;
-            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateX(400px);
-            }
-        }
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 9998;
-            justify-content: center;
-            align-items: center;
-        }
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #c0322d;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-spinner"></div>
-</div>
-<% if (request.getParameter("error") != null) { %>
-<div class="alert alert-danger alert-toast alert-dismissible fade show" role="alert">
-    <i class="fas fa-exclamation-circle me-2"></i>
-    Email hoặc mật khẩu không đúng!
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-<% } %>
-<% if (request.getParameter("success") != null) { %>
-<div class="alert alert-success alert-toast alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    Đăng ký thành công! Vui lòng đăng nhập.
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-<% } %>
+    <!DOCTYPE html>
+    <html lang="en">
 
-<div class="login-container d-flex justify-content-center align-items-center vh-100">
-    <div class="login-card bg-white rounded-4 shadow p-5" style="max-width: 500px; width: 100%;">
-        <div class="text-center mb-4">
-            <div class="logo mb-3">
-                <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
-                    <rect width="32" height="32" rx="6" fill="#0d6efd"/>
-                    <path d="M8 12h16v2H8v-2zm0 4h16v2H8v-2zm0 4h10v2H8v-2z" fill="white"/>
-                </svg>
-            </div>
-            <h3 class="fw-bold">Đăng nhập vào PDF Converter</h3>
-            <p class="text-muted mb-0">Chào mừng bạn trở lại! Hãy đăng nhập để tiếp tục</p>
-        </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login - PDF Converter</title>
+        <link rel="stylesheet" href="css/styles1.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+        <link rel="icon" href="logo.png" type="image/png">
+        <link rel="stylesheet" href="styles1.css">
 
-        <form action="login" method="post" onsubmit="showLoading()">
-            <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="email" name="email" placeholder="email@example.com" required>
-                <label for="email">Email</label>
-            </div>
-
-            <div class="form-floating mb-3 position-relative">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                <label for="password">Mật khẩu</label>
-                <button type="button" class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-3 border-0 bg-transparent"
-                        onclick="togglePassword()">
-                    <i class="fa-solid fa-eye" id="toggleIcon"></i>
-                </button>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="remember" checked>
-                    <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
-                </div>
-                <a href="#" class="text-decoration-none small">Quên mật khẩu</a>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="submitBtn">
-                <span id="submitText">Đăng nhập</span>
-                <span id="submitSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
-            </button>
-
-            <div class="text-center my-3 text-muted">Hoặc tiếp tục với</div>
-
-            <div class="text-center mt-3">
-                <a href="#" class="btn btn-outline-danger w-50 me-2">
-                    <i class="fab fa-google me-2"></i> Google
-                </a>
-            </div>
-
-            <p class="text-center mt-4">
-                Bạn chưa có tài khoản?
-                <a href="register.jsp" class="text-decoration-none fw-semibold">Đăng ký ngay</a>
-            </p>
-        </form>
-        <div class="text-center mt-3">
-            <button type="button" class="btn btn-primary w-100 py-2 fw-semibold"
-                    onclick="window.location.href='index.jsp'">
-                Quay lại
-            </button>
-        </div>
+    </head>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
     </div>
-</div>
+    <% if (request.getParameter("error") !=null) { %>
+        <div class="alert alert-danger alert-toast alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Email hoặc mật khẩu không đúng!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <% } %>
+            <% if (request.getParameter("success") !=null) { %>
+                <div class="alert alert-success alert-toast alert-dismissible fade show" role="alert"
+                    style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Đăng ký thành công! Vui lòng đăng nhập.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <% } %>
 
-<script>
-    function togglePassword() {
-        const pass = document.getElementById("password");
-        const icon = document.getElementById("toggleIcon");
-        if (pass.type === "password") {
-            pass.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            pass.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
-    }
-    
-    function showLoading() {
-        document.getElementById("loadingOverlay").style.display = "flex";
-        const submitBtn = document.getElementById("submitBtn");
-        const submitText = document.getElementById("submitText");
-        const submitSpinner = document.getElementById("submitSpinner");
-        submitBtn.disabled = true;
-        submitText.textContent = "Đang xử lý...";
-        submitSpinner.classList.remove("d-none");
-    }
-    
-    // Auto-hide alerts after 3 seconds
-    setTimeout(function() {
-        const alerts = document.querySelectorAll(".alert-toast");
-        alerts.forEach(function(alert) {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        });
-    }, 3000);
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                    <div class="login-container">
+                        <div class="login-card bg-white rounded-4 shadow p-5" style="max-width: 500px; width: 100%;">
+                            <div class="text-center mb-4">
+                                <div class="logo mb-3">
+                                    <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+                                        <rect width="32" height="32" rx="6" fill="#0d6efd" />
+                                        <path d="M8 12h16v2H8v-2zm0 4h16v2H8v-2zm0 4h10v2H8v-2z" fill="white" />
+                                    </svg>
+                                </div>
+                                <h3 class="fw-bold">Đăng nhập vào PDF Converter</h3>
+                                <p class="text-muted mb-0">Chào mừng bạn trở lại! Hãy đăng nhập để tiếp tục</p>
+                            </div>
 
-</body>
-</html>
+                            <form action="login" method="post" onsubmit="showLoading()">
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="email@example.com" required>
+                                    <label for="email">Email</label>
+                                </div>
+
+                                <div class="form-floating mb-3 position-relative">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Password" required>
+                                    <label for="password">Mật khẩu</label>
+                                    <button type="button"
+                                        class="btn btn-sm position-absolute end-0 top-50 translate-middle-y me-3 border-0 bg-transparent"
+                                        onclick="togglePassword()">
+                                        <i class="fa-solid fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="remember" checked>
+                                        <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none small">Quên mật khẩu</a>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="submitBtn">
+                                    <span id="submitText">Đăng nhập</span>
+                                    <span id="submitSpinner" class="spinner-border spinner-border-sm d-none"
+                                        role="status"></span>
+                                </button>
+
+                                <div class="text-center my-3 text-muted">Hoặc tiếp tục với</div>
+
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-outline-danger w-50 me-2">
+                                        <i class="fab fa-google me-2"></i> Google
+                                    </a>
+                                </div>
+
+                                <p class="text-center mt-4">
+                                    Bạn chưa có tài khoản?
+                                    <a href="register" class="text-decoration-none fw-semibold">Đăng ký ngay</a>
+                                </p>
+                            </form>
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-primary w-100 py-2 fw-semibold"
+                                    onclick="window.location.href='index.jsp'">
+                                    Quay lại
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function togglePassword() {
+                            const pass = document.getElementById("password");
+                            const icon = document.getElementById("toggleIcon");
+                            if (pass.type === "password") {
+                                pass.type = "text";
+                                icon.classList.remove("fa-eye");
+                                icon.classList.add("fa-eye-slash");
+                            } else {
+                                pass.type = "password";
+                                icon.classList.remove("fa-eye-slash");
+                                icon.classList.add("fa-eye");
+                            }
+                        }
+
+                        function showLoading() {
+                            document.getElementById("loadingOverlay").style.display = "flex";
+                            const submitBtn = document.getElementById("submitBtn");
+                            const submitText = document.getElementById("submitText");
+                            const submitSpinner = document.getElementById("submitSpinner");
+                            submitBtn.disabled = true;
+                            submitText.textContent = "Đang xử lý...";
+                            submitSpinner.classList.remove("d-none");
+                        }
+
+                        // Auto-hide alerts after 3 seconds
+                        setTimeout(function () {
+                            const alerts = document.querySelectorAll(".alert-toast");
+                            alerts.forEach(function (alert) {
+                                const bsAlert = new bootstrap.Alert(alert);
+                                bsAlert.close();
+                            });
+                        }, 3000);
+                    </script>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+                    </body>
+
+    </html>

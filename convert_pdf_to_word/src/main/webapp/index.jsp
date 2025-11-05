@@ -12,122 +12,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>PDF Converter</title>
-    <link rel="stylesheet" href="css/styles.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        .alert-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            min-width: 300px;
-            z-index: 9999;
-            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-                transform: translateX(400px);
-            }
-        }
-        .user-card {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            animation: fadeInUp 0.5s ease-out;
-        }
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #c0322d 0%, #ff6b5b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 0 auto 20px;
-        }
-        .user-info h3 {
-            color: #222;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .user-info-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
-            gap: 10px;
-        }
-        .user-info-item:last-child {
-            border-bottom: none;
-        }
-        .user-info-label {
-            color: #666;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .user-info-value {
-            color: #222;
-            font-weight: 500;
-        }
-        .role-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: #c0322d;
-            color: white;
-        }
-        .welcome-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        .welcome-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #c0322d 0%, #ff6b5b 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.875rem;
-            font-weight: bold;
-        }
-    </style>
+     <link rel="stylesheet" href="css/styles.css"/>
 </head>
 
 <body>
@@ -145,9 +31,9 @@
         </div>
         <ul class="menu">
             <% if (email != null) { %>
-            <li><a href="index.jsp" class="active">Trang chủ</a></li>
-            <li><a href="convert.jsp">Chuyển đổi</a></li>
-            <li><a href="history.jsp">Lịch sử</a></li>
+            <li><a href="index" class="active">Trang chủ</a></li> 
+            <li><a href="convert">Chuyển đổi</a></li>
+            <li><a href="history">Lịch sử</a></li>
             <li>
                 <div class="welcome-container">
                     <div class="welcome-avatar"><%= username != null && !username.isEmpty() ? Character.toUpperCase(username.charAt(0)) : "U" %></div>
@@ -156,8 +42,8 @@
             </li>
             <li><a href="logout" class="btn btn-logout">Đăng xuất</a></li>
             <% } else { %>
-            <li><a href="login.jsp" class="btn btn-login">Đăng nhập</a></li>
-            <li><a href="register.jsp" class="btn btn-register">Đăng ký</a></li>
+            <li><a href="login" class="btn btn-login">Đăng nhập</a></li>
+            <li><a href="register" class="btn btn-register">Đăng ký</a></li>
             <% } %>
         </ul>
     </nav>
@@ -168,7 +54,7 @@
         <h1 class="hero_header1">Make your work</h1>
         <h1 class="hero_header2">easier.</h1>
         <p class="hero_description">Chuyển PDF sang Word dễ dàng, nhanh và chính xác chỉ trong một cú nhấp</p>
-        <a href="login.jsp" class="btn btn-login">
+        <a href="login" class="btn btn-login">
             Bắt đầu ngay
         </a>
     </div>
