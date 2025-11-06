@@ -20,6 +20,19 @@ public class UserDAO {
         }
     }
 
+    public boolean resetPassword(User user) {
+        String sql = "UPDATE users SET password = ? WHERE username = ? AND email = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, user.getPassword());
+            ps.setString(2, user.getUsername());
+            ps.setString(3, user.getEmail());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean register(User user) {
         String sql = "INSERT INTO users (username, password, email, role, created_at) VALUES (?, ?, ?, 'USER', ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -50,6 +63,50 @@ public class UserDAO {
                 return Optional.of(user);
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> findByUsername(String username) {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role"));
+                user.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+                return Optional.of(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> findByEmailAndUsername(String email, String username) {
+        String sql = "SELECT * FROM user WHERE email = ? AND usesrname = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)){
+            ps.setString(1, email);
+            ps.setString(2, username);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setRole(rs.getString("role"));
+                user.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+                return Optional.of(user);   
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Optional.empty();

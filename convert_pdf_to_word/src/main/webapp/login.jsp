@@ -68,7 +68,7 @@
                                         <input class="form-check-input" type="checkbox" id="remember" checked>
                                         <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
                                     </div>
-                                    <a href="#" class="text-decoration-none small">Quên mật khẩu</a>
+                                    <a href="forgotPassword" class="text-decoration-none small">Quên mật khẩu</a>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="submitBtn">

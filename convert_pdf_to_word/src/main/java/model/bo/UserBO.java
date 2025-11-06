@@ -13,6 +13,21 @@ public class UserBO {
         return user.isPresent();
     }
 
+    public boolean isAccountExist(String email, String username) {
+        Optional<User> user = userDAO.findByEmailAndUsername(email, username);
+        return user.isPresent();
+    }
+
+    public boolean forgotPassword(String email, String username, String newPassword) {
+        Optional<User> userOpt = userDAO.findByEmailAndUsername(email, username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setPassword(hashPassword(newPassword));
+            return userDAO.resetPassword(user);
+        }
+        return false;
+    }
+
     public boolean registerUser(User user){
         if(isEmailRegistered(user.getEmail())){
             return false;

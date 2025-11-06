@@ -22,6 +22,13 @@ public class Validator {
           Matcher matcher = PASSWORD_PATTERN.matcher(password);
           return matcher.matches();
      }
+
+     public static boolean isPasswordResetDataInvalid(String email, String username, String newPassword, String confirmPassword) {
+          return    email == null || email.trim().isEmpty() || 
+                    newPassword == null || newPassword.trim().isEmpty() ||
+                    confirmPassword == null || confirmPassword.trim().isEmpty() ||
+                    !confirmPassword.equals(newPassword);
+     }
      
      private Validator() {
      }
