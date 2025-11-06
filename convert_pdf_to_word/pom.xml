@@ -89,6 +89,7 @@
   </dependencies>
 
   <build>
+  <finalName>convert_pdf_to_word</finalName>
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -98,6 +99,15 @@
                 <release>21</release>
             </configuration>
         </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.4.0</version>
+            <configuration>
+              <failOnMissingWebXml>false</failOnMissingWebXml>
+              <warName>convert_pdf_to_word</warName>
+            </configuration>
+          </plugin>
     </plugins>
 </build>
 

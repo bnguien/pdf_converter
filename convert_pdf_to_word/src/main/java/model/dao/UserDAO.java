@@ -90,7 +90,7 @@ public class UserDAO {
     }
 
     public Optional<User> findByEmailAndUsername(String email, String username) {
-        String sql = "SELECT * FROM user WHERE email = ? AND usesrname = ?";
+        String sql = "SELECT * FROM users WHERE email = ? AND username = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)){
             ps.setString(1, email);
             ps.setString(2, username);
