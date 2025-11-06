@@ -47,7 +47,7 @@ public class ForgotPassword extends HttpServlet {
 
           boolean success = userBO.forgotPassword(email, username, newPassword);
           if (success) {
-               response.sendRedirect("login.jsp?success=1");
+               response.sendRedirect("login.jsp?success=2");
           } else {
                response.sendRedirect("forgotPassword.jsp?error=exists"); //Lỗi khi đổi mật khẩu
           }
