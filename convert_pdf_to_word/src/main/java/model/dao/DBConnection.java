@@ -11,7 +11,8 @@ public class DBConnection {
 
     static {
         try {
-            Class.forName("com.mysql.jdbc.Driver"); 
+            // MySQL Connector/J 8+: driver class is com.mysql.cj.jdbc.Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

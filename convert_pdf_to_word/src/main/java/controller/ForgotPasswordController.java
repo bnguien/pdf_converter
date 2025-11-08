@@ -10,7 +10,7 @@ import model.bo.UserBO;
 import util.Validator;
 
 @WebServlet("/forgotPassword")
-public class ForgotPassword extends HttpServlet {
+public class ForgotPasswordController extends HttpServlet {
      private final UserBO userBO = new UserBO();
 
      @Override

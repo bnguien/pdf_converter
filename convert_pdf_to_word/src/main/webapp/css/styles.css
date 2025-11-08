@@ -318,6 +318,68 @@ body {
     color: #c0322d;
 }
 
+/* Uploaded area after successful upload */
+.uploaded-area {
+    text-align: center;
+    padding: 24px;
+}
+.uploaded-area .uploaded-icon {
+    font-size: 48px;
+    color: #e14a4a;
+}
+.uploaded-area .uploaded-title {
+    margin-top: 12px;
+    font-weight: 600;
+}
+.uploaded-area .uploaded-filename {
+    margin-top: 8px;
+    color: #333;
+}
+.convert-form {
+    margin-top: 18px;
+}
+
+/* Error overlay styles */
+#errorOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+#errorOverlay .overlay-box {
+    background: #fff;
+    padding: 20px 24px;
+    border-radius: 8px;
+    max-width: 460px;
+    width: 90%;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+    text-align: left;
+}
+
+/* Overlay header and close button */
+.overlay-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.overlay-title {
+    margin: 0;
+}
+.overlay-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+#overlayMessage {
+    margin-top: 12px;
+    color: #333;
+    line-height: 1.4;
+}
+
 /* ===== FOOTER ===== */
 .footer {
     text-align: center;
