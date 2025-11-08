@@ -29,6 +29,11 @@ public class Validator {
                     confirmPassword == null || confirmPassword.trim().isEmpty() ||
                     !confirmPassword.equals(newPassword);
      }
+
+     public static boolean isInvalidPDFFile(String contentType, String fileName) {
+          return    contentType == null || !contentType.equals("application/pdf") || 
+                    !fileName.toLowerCase().endsWith(".pdf");
+     }
      
      private Validator() {
      }
