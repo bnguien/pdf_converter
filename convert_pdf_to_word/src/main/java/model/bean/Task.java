@@ -2,15 +2,13 @@ package model.bean;
 
 import java.time.LocalDateTime;
 
-import model.enums.TaskStatus;
-
 public class Task {
     private int id;
     private int userId;
     private String pdfName;
     private String pdfPath;
     private String docxPath;
-    private TaskStatus status;
+    private String status;
     private LocalDateTime uploadedAt;
     private LocalDateTime completedAt;
 	public int getId() {
@@ -43,10 +41,10 @@ public class Task {
 	public void setDocxPath(String docxPath) {
 		this.docxPath = docxPath;
 	}
-	public TaskStatus getStatus() {
-        return status;
+	public String getStatus() {
+		return status;
 	}
-	public void setStatus(TaskStatus status) { 
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	public LocalDateTime getUploadedAt() {
@@ -63,8 +61,7 @@ public class Task {
 	}
 
     public Task() {}
-    public Task(int id, int userId, String pdfName, String pdfPath, String docxPath, 
-    			TaskStatus status, LocalDateTime uploadedAt, LocalDateTime completedAt) {
+    public Task(int id, int userId, String pdfName, String pdfPath, String docxPath, String status, LocalDateTime uploadedAt, LocalDateTime completedAt) {
         this.id = id;
         this.userId = userId;
         this.pdfName = pdfName;
