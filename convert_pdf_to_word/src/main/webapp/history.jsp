@@ -34,6 +34,9 @@
                             <td>
                                 <%= t.getCompletedAt() !=null ? t.getCompletedAt() : "..." %>
                             </td>
+                            <td>
+                                <%-- Cho phần download file, khi trạng thái là DONE thì sẽ hiển thị nút download --%>
+                            </td>
 
                         </tr>
                         <% } %>
