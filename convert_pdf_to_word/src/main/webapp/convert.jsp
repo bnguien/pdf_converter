@@ -1,43 +1,47 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convert</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/styles2.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <title>Convert PDF</title>
 </head>
-
 <body>
-<main>
-    <div class="converter">
-        <div class="converter_container">
-            <div class="converter_header">
-                <div class="converter_icon">
-                    <i class="fa-solid fa-file-pdf"></i>
-                </div>
-                <div class="converter_text">
-                    <h2 class="converter_title">Công cụ chuyển đổi PDF trực tuyến</h2>
-                    <p class="converter_subtitle">Dễ dàng chuyển đổi từ và thành PDF chỉ trong vài giây.</p>
-                </div>
-            </div>
+<%
+  Object fileNameObj = request.getAttribute("fileName");
+  Object filePathObj = request.getAttribute("filePath");
 
-            <div class="converter_upload">
-                <button class="converter_btn">
-                    <i class="fa-solid fa-upload"></i>
-                    <span>Chọn tệp</span>
-                </button>
-            </div>
+  if (fileNameObj != null && filePathObj != null) {
+    String fileName = fileNameObj.toString();
+    String filePath = filePathObj.toString()
+      .replace("\\", "/")
+      .replace(request.getServletContext().getRealPath(""), request.getContextPath());
+%>
 
-            <div class="converter_sources">
-                <button class="converter_source"><i class="fa-brands fa-google-drive"></i></button>
-                <button class="converter_source"><i class="fa-brands fa-dropbox"></i></button>
-                <button class="converter_source"><i class="fa-solid fa-link"></i></button>
-            </div>
-        </div>
+    <h2>Chuyển đổi file</h2>
+    <p><strong>Tên file:</strong> <%= fileName %></p>
+
+    <div class="pdf-preview">
+      <embed src="<%= filePath %>" type="application/pdf" width="100%" height="500px">
     </div>
-</main>
+
+    <form action="convert" method="POST">
+      <input type="hidden" name="filePath" value="<%= filePathObj %>">
+      <button type="submit">Convert sang Word</button>
+    </form>
+
+    <div class="text-center mt-3">
+      <button type="button" class="btn btn-primary w-100 py-2 fw-semibold"
+              onclick="window.location.href='index.jsp'">
+        Quay lại
+      </button>
+    </div>
+
+<%
+  } else {
+%>
+    <p style="color:red;">Không có tệp nào được tải lên. Vui lòng quay lại trang chính và thử lại.</p>
+<%
+  }
+%>
 </body>
 </html>
