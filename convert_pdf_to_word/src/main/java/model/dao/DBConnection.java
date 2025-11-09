@@ -11,15 +11,15 @@ public class DBConnection {
 
     static {
         try {
-            // MySQL Connector/J 8+: driver class is com.mysql.cj.jdbc.Driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+        conn.setAutoCommit(true); 
+        return conn;
     }
 }
-
