@@ -69,7 +69,6 @@
         </a>
     </div>
     <% } else { %>
-    <%-- include user card fragment --%>
     <%@ include file="user.jsp" %>
     <div class="converter">
         <div class="converter_container">
@@ -83,8 +82,8 @@
                 </div>
             </div>
 
-            <%-- Nếu upload thành công, hiển thị tên file và nút Convert --%>
-            <% String uploadParam = request.getParameter("upload");
+            <% 
+               String uploadParam = request.getParameter("upload");
                String statusParam = request.getParameter("status");
                String pdfNameParam = request.getParameter("pdfName");
                String taskIdParam = request.getParameter("taskId");
@@ -95,16 +94,17 @@
                 <div class="uploaded-area">
                     <div class="uploaded-icon"><i class="fa-solid fa-file-pdf"></i></div>
                     <div class="uploaded-title">Tệp đã tải lên</div>
-                    <div class="uploaded-filename"> <%= (pdfNameParam != null) ? pdfNameParam : "(tên tệp không xác định)" %> </div>
+                    <div class="uploaded-filename"> 
+                        <%= (pdfNameParam != null) ? pdfNameParam : "(tên tệp không xác định)" %> 
+                    </div>
                     <form action="<%= request.getContextPath() %>/convert" method="post" class="convert-form">
                         <input type="hidden" name="taskId" value="<%= (taskIdParam != null) ? taskIdParam : "" %>">
                         <button type="submit" class="converter_btn">Convert to Word</button>
                     </form>
                 </div>
             <% } else { %>
-                <%-- Mặc định: hiển thị form upload và nguồn --%>
                 <form action="<%= request.getContextPath() %>/upload" method="post" enctype="multipart/form-data" id="uploadForm">
-                    <input type="file" name="pdfFile" id="fileInput" style="display: none" accept="application/pdf,.pdf" required>
+                    <input type="file" name="file" id="fileInput" style="display: none" accept="application/pdf,.pdf" required>
                     <div class="converter_upload">
                         <button type="button" class="converter_btn" onclick="document.getElementById('fileInput').click()">
                             <i class="fa-solid fa-upload"></i>
@@ -133,8 +133,9 @@
 <div class="footer">
     <p>© 2025 PDF Converter. All rights reserved.</p>
 </div>
+
 <!-- Overlay for error messages -->
-<div id="errorOverlay">
+<div id="errorOverlay" style="display: none;">
     <div class="overlay-box">
         <div class="overlay-header">
             <h4 class="overlay-title">Lỗi khi tải tệp</h4>
@@ -143,6 +144,7 @@
         <div id="overlayMessage"></div>
     </div>
 </div>
+
 <script>
     // Auto-hide success message after 3 seconds
     setTimeout(function() {
@@ -170,8 +172,9 @@
 
     // Google Drive Upload
     function handleDriveUpload() {
-        
+        // future integration
     }
+
     // Show error overlay if UploadController returned status=error
     (function() {
         var status = '<%= statusParamTop != null ? statusParamTop : "" %>';
@@ -194,7 +197,6 @@
             overlay.style.display = 'flex';
             document.getElementById('closeOverlay').addEventListener('click', function() {
                 overlay.style.display = 'none';
-                // optionally remove params from URL without reload
                 if (window.history && window.history.replaceState) {
                     var url = new URL(window.location.href);
                     url.searchParams.delete('status');
@@ -205,6 +207,7 @@
         }
     })();
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
