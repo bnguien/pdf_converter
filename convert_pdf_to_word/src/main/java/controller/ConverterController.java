@@ -88,8 +88,6 @@ public class ConverterController extends HttpServlet {
                 } finally {
                     try {
                         Thread.sleep(500);
-                        Utils.deleteFile(filePathFinal);
-                        System.out.println("[DEBUG] Deleted temp file: " + filePathFinal);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
