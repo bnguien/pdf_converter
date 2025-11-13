@@ -72,4 +72,20 @@ public class Utils {
 			System.out.println(e.getMessage());
 		}
 	}
+
+	public static String sanitizeFileName(String input) {
+		if (input == null) return "file";
+		// Map special letters that are not decomposed by Normalizer (e.g. Đ/đ) to ASCII
+		input = input.replace('\u0110', 'D').replace('\u0111', 'd');
+		String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+		String noDiacritics = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+		
+		String safe = noDiacritics.replaceAll("[\\\\/:*?\"<>|]", "_");
+		safe = safe.replaceAll("\\s+", "_").replaceAll("_+", "_");
+		
+		safe = safe.trim();
+		if (safe.length() > 120) safe = safe.substring(0, 120);
+		if (safe.isEmpty()) safe = "file";
+		return safe;
+	}
 }

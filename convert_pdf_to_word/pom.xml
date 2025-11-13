@@ -114,6 +114,8 @@
   </dependencies>
 
   <build>
+    <finalName>convert_pdf_to_word</finalName>
+    
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>

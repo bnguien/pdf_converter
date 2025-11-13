@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Optional;
 
 import model.bean.Task;
 
@@ -90,5 +91,32 @@ public class TaskDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Optional<Task> getTaskDetail(int taskId, int userId) {
+        String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, taskId);
+                ps.setInt(2, userId);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    Task task = new Task();
+                    task.setId(rs.getInt("id"));
+                    task.setUserId(rs.getInt("user_id"));
+                    task.setPdfName(rs.getString("pdf_name"));
+                    task.setPdfPath(rs.getString("pdf_path"));
+                    task.setDocxPath(rs.getString("docx_path"));
+                    task.setStatus(rs.getString("status"));
+                    task.setUploadedAt(rs.getObject("uploaded_at", LocalDateTime.class));
+                    task.setCompletedAt(rs.getObject("completed_at", LocalDateTime.class));
+
+                    return Optional.of(task);
+                }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 }
