@@ -1,0 +1,55 @@
+.main{
+    display: flex;
+    flex-direction: column;
+
+}
+.file-label {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.pdf-preview {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.convert-form {
+    margin-top: 15px;
+}
+
+.error-text {
+    color: red;
+    font-size: 16px;
+    margin-top: 20px;
+}
+.action{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-back {
+    display: inline-block;
+    width:100px;
+    padding: 12px 0;
+    background: linear-gradient(135deg, #c0322d, #ff6b5b);
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, #c0322d, #ce3120);
+    transform: translateY(-3px);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-back:active {
+    transform: translateY(-1px);
+}
