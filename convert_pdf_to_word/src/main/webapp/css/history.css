@@ -1,0 +1,87 @@
+.main{
+    display: flex;
+    flex-direction: column;
+     padding: 20px 40px;
+    background: #faf6ef;
+    min-height: 80vh;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+table th {
+    background: #f45c43;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Hover effect */
+table tr:hover {
+    background: #fff5f2;
+}
+
+/* ONLY STATUS CELL COLORING */
+.status-cell {
+    font-weight: 600;
+}
+
+/* DONE */
+.status-cell.done {
+    background: #e8ffe8;
+    color: #2b7a2b;
+}
+
+/* PROCESSING */
+.status-cell.processing {
+    background: #fff7cc;
+    color: #c99500;
+}
+
+/* Buttons */
+.download-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    background: #f45c43;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+
+.download-btn:hover {
+    background: #d63e2a;
+}
+
+.btn-primary {
+    background: #f45c43;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #d63e2a;
+}
