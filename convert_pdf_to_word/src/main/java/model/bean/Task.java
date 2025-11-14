@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Task {
     private int id;
-    private int userId;
+    private Integer userId;
     private String pdfName;
     private String pdfPath;
     private String docxPath;
@@ -17,10 +17,10 @@ public class Task {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
-	public void setUserId(int userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	public String getPdfName() {
