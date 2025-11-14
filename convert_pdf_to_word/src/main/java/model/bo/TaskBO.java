@@ -16,11 +16,11 @@ public class TaskBO {
     public void updateTask(int taskId, String status, String docxPath){
         taskDAO.updateTaskStatus(taskId, status, docxPath);
     }
-    public void saveHistory(String username, String originalFileName, String storedFileName){
-        taskDAO.saveConversionHistory(username, originalFileName, storedFileName);
-    }
     public Task getCompletedTaskDetail(int taskId, int userId) {
         Optional<Task> task = taskDAO.getTaskDetail(taskId, userId);
         return task.orElse(null);
+    }
+    public Task getTaskIfUserNull(int taskId) {
+        return taskDAO.getTaskIfUserNull(taskId);
     }
 }
