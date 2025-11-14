@@ -16,7 +16,12 @@ public class TaskDAO {
         String sql = "INSERT INTO tasks(user_id, pdf_name, pdf_path, docx_path, status) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, task.getUserId());
+            if (task.getUserId() == null) {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(1, task.getUserId());
+            }
+
             ps.setString(2, task.getPdfName());
             ps.setString(3, task.getPdfPath());
             ps.setString(4, task.getDocxPath());
@@ -31,6 +36,27 @@ public class TaskDAO {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    public Task getTaskIfUserNull(int taskId) {
+        String sql = "SELECT * FROM tasks WHERE id = ? AND user_id IS NULL";
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Task t = new Task();
+                t.setId(rs.getInt("id"));
+                t.setPdfName(rs.getString("pdf_name"));
+                t.setPdfPath(rs.getString("pdf_path"));
+                t.setDocxPath(rs.getString("docx_path"));
+                t.setStatus(rs.getString("status"));
+                return t;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Task> getTasksByUserId(int userId) {
@@ -80,40 +106,27 @@ public class TaskDAO {
         }
     }
 
-    public void saveConversionHistory(String username, String originalFileName, String storedFileName) {
-        String sql = "INSERT INTO conversion_history(username, original_file_name, stored_file_name, converted_at) VALUES (?, ?, ?, NOW())";
-        try (Connection conn = DBConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, username);
-            ps.setString(2, originalFileName);
-            ps.setString(3, storedFileName);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public Optional<Task> getTaskDetail(int taskId, int userId) {
         String sql = "SELECT * FROM tasks WHERE id = ? AND user_id = ?";
         try (Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, taskId);
-                ps.setInt(2, userId);
-                ResultSet rs = ps.executeQuery();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.setInt(2, userId);
+            ResultSet rs = ps.executeQuery();
 
-                if (rs.next()) {
-                    Task task = new Task();
-                    task.setId(rs.getInt("id"));
-                    task.setUserId(rs.getInt("user_id"));
-                    task.setPdfName(rs.getString("pdf_name"));
-                    task.setPdfPath(rs.getString("pdf_path"));
-                    task.setDocxPath(rs.getString("docx_path"));
-                    task.setStatus(rs.getString("status"));
-                    task.setUploadedAt(rs.getObject("uploaded_at", LocalDateTime.class));
-                    task.setCompletedAt(rs.getObject("completed_at", LocalDateTime.class));
+            if (rs.next()) {
+                Task task = new Task();
+                task.setId(rs.getInt("id"));
+                task.setUserId(rs.getInt("user_id"));
+                task.setPdfName(rs.getString("pdf_name"));
+                task.setPdfPath(rs.getString("pdf_path"));
+                task.setDocxPath(rs.getString("docx_path"));
+                task.setStatus(rs.getString("status"));
+                task.setUploadedAt(rs.getObject("uploaded_at", LocalDateTime.class));
+                task.setCompletedAt(rs.getObject("completed_at", LocalDateTime.class));
 
-                    return Optional.of(task);
-                }
+                return Optional.of(task);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
