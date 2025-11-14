@@ -1,8 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.io.File;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -15,7 +13,6 @@ import jakarta.servlet.http.HttpSession;
 import model.bean.Task;
 import model.bo.PdfConverter;
 import model.bo.TaskBO;
-import util.Utils;
 
 @WebServlet("/convert")
 @MultipartConfig
@@ -26,79 +23,98 @@ public class ConverterController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        System.out.println("========== [CONVERTER] START ==========");
+
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
+        HttpSession session = request.getSession(true);
+        System.out.println("[DEBUG] Session ID = " + session.getId());
+        System.out.println("[DEBUG] Session attributes:");
+        System.out.println("   uploadedFilePath = " + session.getAttribute("uploadedFilePath"));
+        System.out.println("   uploadedFileName = " + session.getAttribute("uploadedFileName"));
+        System.out.println("   user_id = " + session.getAttribute("user_id"));
+
+        Integer userId = (session != null) ? (Integer) session.getAttribute("user_id") : null;
+
         String filePathInServer = request.getParameter("filePath");
-        System.out.println("[DEBUG] Request parameter filePath = " + filePathInServer);
+        System.out.println("[DEBUG] request.getParameter(filePath) = " + filePathInServer);
 
         if (filePathInServer == null || filePathInServer.isBlank()) {
-            System.out.println("[DEBUG] filePathInServer is null or empty!");
+            filePathInServer = (String) session.getAttribute("uploadedFilePath");
+            System.out.println("[DEBUG] Using session uploadedFilePath = " + filePathInServer);
+        }
+
+        if (filePathInServer == null || filePathInServer.isBlank()) {
+            System.out.println("[DEBUG] filePath is STILL NULL — cannot convert!");
             response.sendRedirect("convert.jsp?error=no_file_path");
+            System.out.println("========== [CONVERTER] END (FAIL) ==========");
             return;
         }
 
         File file = new File(filePathInServer);
         String fileNameUserUpload = file.getName();
-        String fileNameInServer = fileNameUserUpload;
 
-        System.out.println("[DEBUG] File from request: " + file.getAbsolutePath());
+        System.out.println("[DEBUG] File absolute path = " + file.getAbsolutePath());
         System.out.println("[DEBUG] File exists? " + file.exists());
-        System.out.println("[DEBUG] File size: " + (file.exists() ? file.length() + " bytes" : "N/A"));
-
-        HttpSession session = request.getSession(false);
-        Integer userId = (session != null) ? (Integer) session.getAttribute("user_id") : null;
-        String username = (session != null) ? (String) session.getAttribute("user_username") : null;
-        if (userId == null || username == null) {
-            response.sendRedirect("login.jsp?error=not_logged_in");
-            return;
-        }
+        System.out.println("[DEBUG] File size = " + (file.exists() ? file.length() : "N/A"));
 
         final String filePathFinal = filePathInServer;
-        final String fileNameFinal = fileNameInServer;
-        final String fileNameUserFinal = fileNameUserUpload;
 
         try {
             TaskBO taskBO = new TaskBO();
             Task task = new Task();
+
             task.setUserId(userId);
+            System.out.println("[DEBUG] task.setUserId = " + userId);
+
             task.setPdfName(fileNameUserUpload);
+            System.out.println("[DEBUG] task.setPdfName = " + fileNameUserUpload);
+
             task.setPdfPath(filePathInServer);
+            System.out.println("[DEBUG] task.setPdfPath = " + filePathInServer);
+
             task.setStatus("PROCESSING");
+            System.out.println("[DEBUG] task.setStatus = PROCESSING");
 
             int taskId = taskBO.addTask(task);
+            System.out.println("[DEBUG] Task created with ID = " + taskId);
+
             final int taskIdFinal = taskId;
 
-            System.out.println("[DEBUG] Starting async conversion for: " + filePathFinal);
-            System.out.println("[DEBUG] Exists before convert? " + Files.exists(Path.of(filePathFinal)));
+            System.out.println("[DEBUG] Starting convertAsync for: " + filePathFinal);
 
             PdfConverter.convertAsync(filePathFinal, (outputPath) -> {
-                System.out.println("[DEBUG] filePathFinal in callback: " + filePathFinal);
-                System.out.println("[DEBUG] file exists in callback? " + Files.exists(Path.of(filePathFinal)));
+                System.out.println("[DEBUG] convertAsync callback fired.");
+                System.out.println("[DEBUG] outputPath = " + outputPath);
+                System.out.println("[DEBUG] Updating taskId = " + taskIdFinal);
+
                 try {
-                    System.out.println("[DEBUG] taskIdFinal (saved to DB): " + taskIdFinal);
-                    System.out.println("[DEBUG] Calling updateTask()...");
                     taskBO.updateTask(taskIdFinal, "DONE", outputPath);
-                    System.out.println("[DEBUG] updateTask() finished");
-                    System.out.println("[DEBUG] Calling saveHistory()...");
-                    taskBO.saveHistory(username, fileNameUserFinal, fileNameFinal);
-                    System.out.println("[DEBUG] saveHistory() finished");
+                    System.out.println("[DEBUG] updateTask DONE");
                 } catch (Exception e) {
+                    System.out.println("[ERROR] updateTask FAILED");
                     e.printStackTrace();
-                } finally {
-                    try {
-                        Thread.sleep(500);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
                 }
             });
 
-            response.sendRedirect("history.jsp?message=conversion_started");
+            if (userId == null) {
+                System.out.println("[DEBUG] Guest mode → redirect convert.jsp");
+                response.sendRedirect(
+                    "convert.jsp?status=done&taskId=" + taskId +
+                    "&pdfName=" + fileNameUserUpload
+                );
+            } else {
+                System.out.println("[DEBUG] User logged in → redirect history.jsp");
+                response.sendRedirect("history.jsp?message=conversion_started");
+            }
 
         } catch (Exception e) {
+            System.out.println("[ERROR] Conversion failed:");
             e.printStackTrace();
             response.sendRedirect("convert.jsp?error=conversion_failed");
         }
+
+        System.out.println("========== [CONVERTER] END ==========");
     }
 }
