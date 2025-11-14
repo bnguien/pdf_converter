@@ -16,63 +16,46 @@
 <%@ include file="/header.jsp" %>
 
 <div class="main">
-    <% if (email == null) { %>
-        <div class="hero">
-            <h1 class="hero_header1">Make your work</h1>
-            <h1 class="hero_header2">easier.</h1>
-            <p class="hero_description">Chuyển PDF sang Word dễ dàng, nhanh và chính xác chỉ trong một cú nhấp</p>
-            <a href="login" class="btn btn-login">Bắt đầu ngay</a>
-        </div>
-    <% } else { %>
+    <div class="converter">
+        <div class="converter_container">
 
-        <div class="converter">
-            <div class="converter_container">
+            <div class="converter_header">
+                <div class="converter_icon"><i class="fa-solid fa-file-pdf"></i></div>
+                <div class="converter_text">
+                    <h2 class="converter_title">Công cụ chuyển đổi PDF trực tuyến</h2>
+                    <p class="converter_subtitle">Dễ dàng chuyển PDF sang Word chỉ trong vài giây.</p>
+                </div>
+            </div>
 
-                <div class="converter_header">
-                    <div class="converter_icon"><i class="fa-solid fa-file-pdf"></i></div>
-                    <div class="converter_text">
-                        <h2 class="converter_title">Công cụ chuyển đổi PDF trực tuyến</h2>
-                        <p class="converter_subtitle">Dễ dàng chuyển PDF sang Word chỉ trong vài giây.</p>
-                    </div>
+            <% if ("success".equals(uploadParamTop)) { %>
+
+                <div class="uploaded-area">
+                    <div class="uploaded-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="uploaded-title">Tệp đã tải lên</div>
+                    <div class="uploaded-filename"><%= pdfNameParamTop %></div>
+
+                    <form action="<%= request.getContextPath() %>/convert" method="post" class="convert-form">
+                        <input type="hidden" name="taskId" value="<%= taskIdParamTop %>">
+                        <button type="submit" class="converter_btn">Convert to Word</button>
+                    </form>
                 </div>
 
-                <%
-                    String uploadParam = request.getParameter("upload");
-                    String statusParam = request.getParameter("status");
-                    String pdfNameParam = request.getParameter("pdfName");
-                    String taskIdParam = request.getParameter("taskId");
-                    String msgParam = request.getParameter("msg");
-                %>
+            <% } else { %>
 
-                <% if ("success".equals(uploadParam)) { %>
-
-                    <div class="uploaded-area">
-                        <div class="uploaded-icon"><i class="fa-solid fa-file-pdf"></i></div>
-                        <div class="uploaded-title">Tệp đã tải lên</div>
-                        <div class="uploaded-filename"><%= pdfNameParam != null ? pdfNameParam : "(tên tệp không xác định)" %></div>
-
-                        <form action="<%= request.getContextPath() %>/convert" method="post" class="convert-form">
-                            <input type="hidden" name="taskId" value="<%= taskIdParam != null ? taskIdParam : "" %>">
-                            <button type="submit" class="converter_btn">Convert to Word</button>
-                        </form>
+                <form action="<%= request.getContextPath() %>/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                    <input type="file" name="file" id="fileInput" style="display:none" accept="application/pdf,.pdf" required>
+                    <div class="converter_upload">
+                        <button type="button" class="converter_btn" onclick="document.getElementById('fileInput').click()">
+                            <i class="fa-solid fa-upload"></i><span>Chọn tệp từ máy</span>
+                        </button>
                     </div>
+                </form>
 
-                <% } else { %>
+            <% } %>
 
-                    <form action="<%= request.getContextPath() %>/upload" method="post" enctype="multipart/form-data" id="uploadForm">
-                        <input type="file" name="file" id="fileInput" style="display:none" accept="application/pdf,.pdf" required>
-                        <div class="converter_upload">
-                            <button type="button" class="converter_btn" onclick="document.getElementById('fileInput').click()">
-                                <i class="fa-solid fa-upload"></i><span>Chọn tệp từ máy</span>
-                            </button>
-                        </div>
-                    </form>
-                <% } %>
-
-            </div>
         </div>
+    </div>
 
-    <% } %>
 </div>
 
 <div id="errorOverlay" style="display:none;">
