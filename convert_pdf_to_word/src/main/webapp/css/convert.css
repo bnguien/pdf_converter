@@ -14,6 +14,10 @@
     margin-bottom: 20px;
     overflow: hidden;
 }
+.pdf-preview canvas {
+    max-width: 250px;
+    height: auto;
+}
 
 .convert-form {
     margin-top: 15px;
@@ -31,13 +35,12 @@
 }
 .btn-back {
     display: inline-block;
-    width:100px;
+    width:170px;
     padding: 12px 0;
     background: linear-gradient(135deg, #c0322d, #ff6b5b);
     color: #fff;
     text-align: center;
-    font-size: 16px;
-    font-weight: 600;
+    font-weight: bold;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -52,4 +55,24 @@
 
 .btn-back:active {
     transform: translateY(-1px);
+}
+.convert-form .convert-btn {
+    background: #185abd ;       /* màu Word */
+    border-radius: 8px;
+    color: white;
+    padding: 12px 22px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.convert-form  .convert-btn:hover {
+    background: #0f4ba8;
+    transform: translateY(-1px);
+}
+    
+.convert-form  .convert-btn:active {
+    transform: scale(0.97);
 }
