@@ -73,21 +73,5 @@
     </div>
 
 </div> 
-
-<script>
-    setInterval(function () {
-        if (!document.hidden) {
-            fetch(window.location.href, { cache: "no-store" })
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const newDoc = parser.parseFromString(html, "text/html");
-                    const newTable = newDoc.querySelector("table");
-                    const oldTable = document.querySelector("table");
-                    if (newTable && oldTable) oldTable.innerHTML = newTable.innerHTML;
-                });
-        }
-    }, 4000);
-</script>
-
+<script src="<%= request.getContextPath() %>/js/history-refresh.js"></script>
 <%@ include file="/footer.jsp" %>
