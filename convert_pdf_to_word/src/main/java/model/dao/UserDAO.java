@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import model.bean.User;
+import util.DBConnection;
 
 public class UserDAO {
     private Connection conn;
