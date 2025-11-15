@@ -22,7 +22,7 @@
                 + request.getServerName() + ":" 
                 + request.getServerPort()
                 + request.getContextPath()
-                + "/uploads/" + fileNameOnly;
+                + "/upload/" + fileNameOnly;
     }
 
     Integer userId = (Integer) session.getAttribute("user_id");
@@ -31,8 +31,6 @@
     String guestPdfName = (String) session.getAttribute("guest_pdfName");
     String guestDocxPath = (String) session.getAttribute("guest_docxPath");
 %>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
 <%@ include file="/header.jsp" %>
 
@@ -47,13 +45,13 @@
         </p>
 
         <div class="pdf-preview">
-            <canvas id="pdfThumb" width="300"></canvas>
+            <canvas id="pdfThumb" width="200"></canvas>
         </div>
 
         <% if (guestDocxPath == null) { %> 
             <form action="convert" method="POST" class="convert-form">
                 <input type="hidden" name="filePath" value="<%= filePathObj %>">
-                <button type="submit" class="btn btn-primary">Convert sang Word</button>
+                <button type="submit" class="convert-btn">Convert sang Word</button>
             </form>
         <% } %>
 
@@ -90,26 +88,12 @@
 
 <%@ include file="/footer.jsp" %>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
 <script>
     const pdfPath = "<%= fileUrl %>";
-
-    pdfjsLib.getDocument(pdfPath).promise.then(function (pdf) {
-        pdf.getPage(1).then(function (page) {
-
-            var viewport = page.getViewport({ scale: 1 });
-            var canvas = document.getElementById("pdfThumb");
-            var context = canvas.getContext("2d");
-
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            page.render({
-                canvasContext: context,
-                viewport: viewport
-            });
-
-        });
-    }).catch(function (error) {
-        console.error("PDF load error:", error);
-    });
 </script>
+
+<script src="<%= request.getContextPath() %>/js/pdf-preview.js"></script>
+<script src="<%= request.getContextPath() %>/js/convert-page.js"></script>
+
