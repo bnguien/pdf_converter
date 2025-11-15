@@ -67,52 +67,12 @@
         <div id="overlayMessage"></div>
     </div>
 </div>
-
 <script>
-    setTimeout(() => {
-        document.querySelectorAll(".alert-success").forEach(a => {
-            a.style.animation = "fadeOut .3s forwards";
-            setTimeout(() => a.remove(), 300);
-        });
-    }, 3000);
-
-    var _fileInput = document.getElementById("fileInput");
-    if (_fileInput) {
-        _fileInput.addEventListener("change", function () {
-            if (this.value) document.getElementById("uploadForm").submit();
-        });
-    }
-
-    function handleDriveUpload() {}
-
-    (function () {
-        var status = '<%= statusParamTop != null ? statusParamTop : "" %>';
-        var msgCode = '<%= msgParamTop != null ? msgParamTop : "" %>';
-
-        function getFriendlyMessage(code) {
-            switch (code) {
-                case 'invalid_file_type': return 'Loại tệp không hợp lệ. Vui lòng chọn tệp PDF.';
-                case 'db_save_failed': return 'Lỗi lưu vào cơ sở dữ liệu. Vui lòng thử lại.';
-                case 'system_io_error': return 'Lỗi hệ thống. Vui lòng thử lại sau.';
-                default: return 'Đã xảy ra lỗi trong quá trình tải tệp.';
-            }
-        }
-
-        if (status === 'error') {
-            let overlay = document.getElementById('errorOverlay');
-            let overlayMsg = document.getElementById('overlayMessage');
-            overlayMsg.textContent = getFriendlyMessage(msgCode);
-            overlay.style.display = 'flex';
-
-            document.getElementById('closeOverlay').onclick = () => {
-                overlay.style.display = 'none';
-                let url = new URL(window.location.href);
-                url.searchParams.delete("status");
-                url.searchParams.delete("msg");
-                window.history.replaceState({}, document.title, url.pathname + url.search);
-            };
-        }
-    })();
+    window.STATUS_FROM_JSP = '<%= statusParamTop != null ? statusParamTop : "" %>';
+    window.MSG_CODE_FROM_JS = '<%= msgParamTop != null ? msgParamTop : "" %>';
 </script>
+
+<script src="<%= request.getContextPath() %>/js/upload-actions.js"></script>
+<script src="<%= request.getContextPath() %>/js/upload-error-handler.js"></script>
 
 <%@ include file="/footer.jsp" %>
