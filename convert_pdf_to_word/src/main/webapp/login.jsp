@@ -121,44 +121,10 @@
             </div>
         </div>
     </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function togglePassword() {
-            const pass = document.getElementById("password");
-            const icon = document.getElementById("toggleIcon");
-            if (pass.type === "password") {
-                pass.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                pass.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            }
-        }
-
-        function showLoading() {
-            document.getElementById("loadingOverlay").style.display = "flex";
-            const submitBtn = document.getElementById("submitBtn");
-            const submitText = document.getElementById("submitText");
-            const submitSpinner = document.getElementById("submitSpinner");
-            submitBtn.disabled = true;
-            submitText.textContent = "Đang xử lý...";
-            submitSpinner.classList.remove("d-none");
-        }
-
-        // Auto-hide alerts after 3 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function () {
-                const alerts = document.querySelectorAll(".alert-toast");
-                alerts.forEach(function (alert) {
-                    // Dùng constructor của Bootstrap
-                    const bsAlert = bootstrap.Alert.getInstance(alert) || new bootstrap.Alert(alert);
-                    bsAlert.close();
-                });
-            }, 3000);
-        });
-    </script>
+<script src="<%= request.getContextPath() %>/js/login-actions.js"></script>
+<script src="<%= request.getContextPath() %>/js/login-alert.js"></script>
 </body>
 </html>
+    
