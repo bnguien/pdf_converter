@@ -28,8 +28,14 @@
     Integer userId = (Integer) session.getAttribute("user_id");
 
     Integer guestTaskId = (Integer) session.getAttribute("guest_taskId");
-    String guestPdfName = (String) session.getAttribute("guest_pdfName");
-    String guestDocxPath = (String) session.getAttribute("guest_docxPath");
+    String taskStatus = (String) request.getAttribute("taskStatus");
+    Boolean processingAttr = (Boolean) request.getAttribute("isProcessing");
+    Boolean doneAttr = (Boolean) request.getAttribute("isDone");
+    Boolean canConvertAttr = (Boolean) request.getAttribute("canShowConvertButton");
+
+    boolean isProcessing = processingAttr != null && processingAttr;
+    boolean isDone = doneAttr != null && doneAttr;
+    boolean canShowConvertButton = canConvertAttr == null ? true : canConvertAttr;
 %>
 
 <%@ include file="/header.jsp" %>
@@ -48,23 +54,56 @@
             <canvas id="pdfThumb" width="200"></canvas>
         </div>
 
-        <% if (guestDocxPath == null) { %> 
+        <% if (taskStatus != null) { %>
+            <div class="status-box">
+                <span class="status-label">Trạng thái:</span>
+                <span class="status-badge <%= isDone ? "done" : (isProcessing ? "processing" : "pending") %>">
+                    <%= taskStatus %>
+                </span>
+                <% if (isProcessing) { %>
+                    <p class="status-note">Hệ thống đang xử lý file của bạn...</p>
+                <% } else if (isDone) { %>
+                    <p class="status-note">Tệp đã sẵn sàng để tải xuống.</p>
+                <% } %>
+            </div>
+        <% } %>
+
+        <% if (canShowConvertButton) { %> 
             <form action="convert" method="POST" class="convert-form">
                 <input type="hidden" name="filePath" value="<%= filePathObj %>">
                 <button type="submit" class="convert-btn">Convert sang Word</button>
             </form>
         <% } %>
 
-        <% if (guestDocxPath != null) { %>
+        <% if (isProcessing) { %>
+            <div class="processing-hint">
+                <p>Vui lòng chờ trong giây lát. Trang sẽ tự động cập nhật khi hoàn tất.</p>
+            </div>
+        <% } %>
+
+        <% if (isDone) { %>
             <div class="download-area">
-                <form action="download" method="GET">
+                <form action="<%= request.getContextPath() %>/download" method="GET">
+                    <input type="hidden" name="taskId" value="<%= guestTaskId %>">
+                    <input type="hidden" name="type" value="pdf">
+                    <button type="submit" class="download-btn">
+                        <i class="fas fa-download"></i> Tải file PDF
+                    </button>
+                </form>
+                <form action="<%= request.getContextPath() %>/download" method="GET">
                     <input type="hidden" name="taskId" value="<%= guestTaskId %>">
                     <input type="hidden" name="type" value="docx">
-                    <button type="submit" class="btn btn-success" style="margin-top:15px;">
-                        Tải File Word
+                    <button type="submit" class="download-btn">
+                        <i class="fas fa-download"></i> Tải file DOCX
                     </button>
                 </form>
             </div>
+
+            <% if (userId != null) { %>
+            <div class="history-link">
+                <a href="<%= request.getContextPath() %>/history.jsp">Xem lịch sử</a>
+            </div>
+            <% } %>
         <% } %>
 
         <div class="action">
@@ -97,3 +136,10 @@
 <script src="<%= request.getContextPath() %>/js/pdf-preview.js"></script>
 <script src="<%= request.getContextPath() %>/js/convert-page.js"></script>
 
+<% if (isProcessing) { %>
+<script>
+    setTimeout(function () {
+        window.location.href = "<%= request.getContextPath() %>/convert-page";
+    }, 4000);
+</script>
+<% } %>

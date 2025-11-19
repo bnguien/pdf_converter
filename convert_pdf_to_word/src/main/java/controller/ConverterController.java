@@ -1,7 +1,8 @@
 package controller;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import model.bean.Task;
 import model.bo.PdfConverter;
 import model.bo.TaskBO;
@@ -47,7 +47,7 @@ public class ConverterController extends HttpServlet {
 
         if (filePathInServer == null || filePathInServer.isBlank()) {
             System.out.println("[DEBUG] filePath is STILL NULL — cannot convert!");
-            response.sendRedirect("convert.jsp?error=no_file_path");
+            response.sendRedirect(request.getContextPath() + "/convert-page?error=no_file_path");
             System.out.println("========== [CONVERTER] END (FAIL) ==========");
             return;
         }
@@ -98,21 +98,20 @@ public class ConverterController extends HttpServlet {
                 }
             });
 
-            if (userId == null) {
-                System.out.println("[DEBUG] Guest mode → redirect convert.jsp");
-                response.sendRedirect(
-                    "convert.jsp?status=done&taskId=" + taskId +
-                    "&pdfName=" + fileNameUserUpload
-                );
-            } else {
-                System.out.println("[DEBUG] User logged in → redirect history.jsp");
-                response.sendRedirect("history.jsp?message=conversion_started");
-            }
+            String docxPath = task.getDocxPath();
+            System.out.println("[DEBUG] Forwarding to convert.jsp for status display.");
+            task.setId(taskId);
+            request.setAttribute("taskDetails", task);
 
+            session.setAttribute("guest_taskId", taskId); 
+            session.setAttribute("guest_pdfName", fileNameUserUpload); 
+            session.setAttribute("guest_docxPath", docxPath);
+            System.out.println("[DEBUG] DocxPath: " + docxPath);
+            response.sendRedirect(request.getContextPath() + "/convert-page");
         } catch (Exception e) {
             System.out.println("[ERROR] Conversion failed:");
             e.printStackTrace();
-            response.sendRedirect("convert.jsp?error=conversion_failed");
+            response.sendRedirect(request.getContextPath() + "/convert-page?error=conversion_failed");
         }
 
         System.out.println("========== [CONVERTER] END ==========");
