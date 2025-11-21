@@ -40,7 +40,7 @@ public class UploadController extends HttpServlet {
 
         request.getSession().setAttribute("uploadedFilePath", filePath);
         request.getSession().setAttribute("uploadedFileName", fileName);
-        request.getRequestDispatcher("convert.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/convert-page");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

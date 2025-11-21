@@ -76,3 +76,90 @@
 .convert-form  .convert-btn:active {
     transform: scale(0.97);
 }
+
+.status-box {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.status-label {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.status-badge.processing {
+    background: #f4b400;
+}
+
+.status-badge.done {
+    background: #0f9d58;
+}
+
+.status-badge.pending {
+    background: #5f6368;
+}
+
+.status-note {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: #444;
+}
+
+.processing-hint {
+    margin-top: 15px;
+    padding: 12px 16px;
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 6px;
+    color: #856404;
+}
+
+.download-area {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.download-btn {
+    background: #2c7be5;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.download-btn:hover {
+    background: #1b6ad7;
+    transform: translateY(-1px);
+}
+
+.history-link {
+    margin-top: 15px;
+}
+
+.history-link a {
+    color: #185abd;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.history-link a:hover {
+    text-decoration: underline;
+}

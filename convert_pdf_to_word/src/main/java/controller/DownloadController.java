@@ -4,8 +4,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
-import java.text.Normalizer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,15 +29,10 @@ public class DownloadController extends HttpServlet {
           response.setCharacterEncoding("UTF-8");
 
           HttpSession session = request.getSession(false);
-          if (session == null || session.getAttribute("user_id") == null) {
-               response.sendRedirect(request.getContextPath() + "/login.jsp?error=not_logged_in");
-               return;
-          }
+          Integer userId = (session != null) ? (Integer) session.getAttribute("user_id") : null;
+          Integer guestTaskIdInSession = (session != null) ? (Integer) session.getAttribute("guest_taskId") : null;
 
           try {
-               int userId = (Integer)session.getAttribute("user_id");
-               System.out.println("[DEBUG] Request parameter user_id " + userId);
-
                int taskId = (request.getParameter("taskId") != null) ? Integer.parseInt(request.getParameter("taskId")) : -1;
                System.out.println("[DEBUG] Request parameter task_id " + taskId);
                
@@ -56,7 +52,17 @@ public class DownloadController extends HttpServlet {
                }
 
                try {
-                    Task task = taskBO.getCompletedTaskDetail(taskId, userId);
+                    Task task = null;
+                    if (userId != null) {
+                         task = taskBO.getCompletedTaskDetail(taskId, userId);
+                    } else {
+                         if (guestTaskIdInSession == null || guestTaskIdInSession.intValue() != taskId) {
+                              System.out.println("[DEBUG] Guest user tries to download task without permission.");
+                              response.sendRedirect(request.getContextPath() + "/convert-page?error=no_permission");
+                              return;
+                         }
+                         task = taskBO.getTaskIfUserNull(taskId);
+                    }
 
                     if (task == null) {
                          System.out.println("[DEBUG] No task found or not owned by user: " + taskId);
