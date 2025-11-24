@@ -21,7 +21,7 @@ public class UploadController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Part filePart = request.getPart("file");
-        String folderUpload = request.getServletContext().getRealPath("/upload");
+        String folderUpload = request.getServletContext().getRealPath("\\\\\\\\172.20.10.7\\\\pdf_uploads");
         if (folderUpload == null) {
             folderUpload = System.getProperty("java.io.tmpdir") + File.separator + "pdf_uploads";
         }
