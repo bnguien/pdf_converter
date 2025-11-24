@@ -1,10 +1,11 @@
 package util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,21 +44,36 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Download file từ thư mục upload sử dụng đường dẫn từ biến môi trường
+	 * @deprecated Method này không được sử dụng. Sử dụng DownloadController thay thế.
+	 * File path nên được lấy từ database thông qua taskId.
+	 */
+	@Deprecated
 	public static void downloadFile(HttpServletRequest request, HttpServletResponse response, String fileName) {
 		try {
 			String fileNameOutput = fileName.substring(fileName.indexOf("_") + 1);
 			System.out.println("Output:" + fileNameOutput);
 			System.out.println("Downloading: " + fileName);
 
-			String filePath = request.getServletContext().getRealPath("/upload") + "/" + fileName;
+			// Sử dụng StoragePathUtil thay vì getRealPath để thống nhất với hệ thống
+			String uploadDir = StoragePathUtil.getUploadDirectory();
+			Path filePath = Paths.get(uploadDir, fileName);
+			
+			if (!Files.exists(filePath)) {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found: " + fileName);
+				return;
+			}
+			
 			String mimeType = request.getServletContext().getMimeType(fileName);
-
 			if (mimeType == null) {
 				mimeType = "application/octet-stream";
 			}
+			
 			response.setContentType(mimeType);
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileNameOutput + "\"");
-			try (FileInputStream fileInputStream = new FileInputStream(filePath);
+			
+			try (InputStream fileInputStream = Files.newInputStream(filePath);
 					OutputStream outputStream = response.getOutputStream()) {
 				byte[] buffer = new byte[4096];
 				int bytesRead = -1;
@@ -68,8 +84,17 @@ public class Utils {
 				}
 				System.out.println("Tổng bytes:" + total);
 			}
+		} catch (IllegalStateException e) {
+			System.err.println("[ERROR] " + e.getMessage());
+			try {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+					"Cấu hình hệ thống chưa đúng. Vui lòng liên hệ quản trị viên.");
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.err.println("[ERROR] downloadFile error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

@@ -2,7 +2,7 @@
 setTimeout(() => {
     document.querySelectorAll(".alert-success").forEach(a => {
         a.style.animation = "fadeOut .3s forwards";
-        setTimeout(() => a.remove(), 300);
+        setTimeout(() => a.remove(), 400);
     });
 }, 3000);
 
@@ -17,8 +17,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
-// Google Drive upload placeholder
-function handleDriveUpload() {
-    console.log("Drive upload chưa triển khai.");
-}
