@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import model.bean.Task;
 import model.bo.PdfConverter;
 import model.bo.TaskBO;
+import service.WorkerService;
 
 @WebServlet("/convert")
 @MultipartConfig
@@ -82,21 +83,36 @@ public class ConverterController extends HttpServlet {
 
             final int taskIdFinal = taskId;
 
-            System.out.println("[DEBUG] Starting convertAsync for: " + filePathFinal);
-
-            PdfConverter.convertAsync(filePathFinal, (outputPath) -> {
-                System.out.println("[DEBUG] convertAsync callback fired.");
-                System.out.println("[DEBUG] outputPath = " + outputPath);
-                System.out.println("[DEBUG] Updating taskId = " + taskIdFinal);
-
-                try {
-                    taskBO.updateTask(taskIdFinal, "DONE", outputPath);
-                    System.out.println("[DEBUG] updateTask DONE");
-                } catch (Exception e) {
-                    System.out.println("[ERROR] updateTask FAILED");
-                    e.printStackTrace();
+            // Kiểm tra xem có Worker không, nếu không thì dùng local converter
+            boolean useWorker = WorkerService.isWorkerAvailable();
+            
+            if (useWorker) {
+                System.out.println("[DEBUG] Worker available, sending task to worker");
+                String serverBaseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+                boolean sent = WorkerService.sendConvertTask(taskIdFinal, filePathFinal, serverBaseUrl);
+                
+                if (!sent) {
+                    System.out.println("[WARN] Failed to send to worker, falling back to local conversion");
+                    useWorker = false;
                 }
-            });
+            }
+            
+            if (!useWorker) {
+                System.out.println("[DEBUG] Using local converter for: " + filePathFinal);
+                PdfConverter.convertAsync(filePathFinal, (outputPath) -> {
+                    System.out.println("[DEBUG] convertAsync callback fired.");
+                    System.out.println("[DEBUG] outputPath = " + outputPath);
+                    System.out.println("[DEBUG] Updating taskId = " + taskIdFinal);
+
+                    try {
+                        taskBO.updateTask(taskIdFinal, "DONE", outputPath);
+                        System.out.println("[DEBUG] updateTask DONE");
+                    } catch (Exception e) {
+                        System.out.println("[ERROR] updateTask FAILED");
+                        e.printStackTrace();
+                    }
+                });
+            }
 
             String docxPath = task.getDocxPath();
             System.out.println("[DEBUG] Forwarding to convert.jsp for status display.");
