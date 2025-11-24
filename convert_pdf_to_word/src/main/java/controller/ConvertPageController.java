@@ -14,86 +14,79 @@ import model.bo.TaskBO;
 @WebServlet("/convert-page")
 public class ConvertPageController extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private final TaskBO taskBO = new TaskBO();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        prepareViewData(request);
-        request.getRequestDispatcher("convert.jsp").forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        prepareViewData(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
     }
 
-    private void prepareViewData(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            session = request.getSession(true);
-        }
+    private void prepareViewData(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession(true);
 
-        Object fileNameObj = request.getAttribute("fileName");
-        Object filePathObj = request.getAttribute("filePath");
+        Integer userId = (Integer) session.getAttribute("user_id");
+        
+        Integer guestTaskId = (Integer) session.getAttribute("guest_taskId");
+        String uploadedFilePath = (String) session.getAttribute("uploadedFilePath");
+        String uploadedFileName = (String) session.getAttribute("uploadedFileName");
+        String guestDocxPath = (String) session.getAttribute("guest_docxPath");
 
-        if (fileNameObj == null) {
-            fileNameObj = session.getAttribute("uploadedFileName");
-            if (fileNameObj != null) {
-                request.setAttribute("fileName", fileNameObj);
+        if (guestTaskId == null) {
+            if (uploadedFilePath == null || uploadedFilePath.isBlank()) {
+                response.sendRedirect(request.getContextPath() + "/index.jsp?error=no_file_uploaded");
+                return;
             }
+
+            // Người dùng đã upload file nhưng chưa tạo task convert.
+            request.setAttribute("taskStatus", "PENDING");
+            request.setAttribute("isProcessing", false);
+            request.setAttribute("isDone", false);
+            request.setAttribute("canShowConvertButton", true);
+            request.setAttribute("filePath", uploadedFilePath);
+            request.setAttribute("fileName", uploadedFileName);
+            request.getRequestDispatcher("/convert.jsp").forward(request, response);
+            return;
         }
-
-        if (filePathObj == null) {
-            filePathObj = session.getAttribute("uploadedFilePath");
-            if (filePathObj != null) {
-                request.setAttribute("filePath", filePathObj);
-            }
-        }
-
-        Integer userId = (session != null) ? (Integer) session.getAttribute("user_id") : null;
-        Integer guestTaskId = (session != null) ? (Integer) session.getAttribute("guest_taskId") : null;
-        String guestDocxPath = (session != null) ? (String) session.getAttribute("guest_docxPath") : null;
-
-        Task taskInfo = null;
-        String taskStatus = null;
-        String docxPathFromDb = null;
-
-        if (guestTaskId != null) {
-            TaskBO taskBO = new TaskBO();
-            if (userId != null) {
-                taskInfo = taskBO.getCompletedTaskDetail(guestTaskId, userId);
-            } else {
-                taskInfo = taskBO.getTaskIfUserNull(guestTaskId);
-            }
+        
+        Task taskInfo;
+        String taskStatus = "UNKNOWN";
+        if (userId != null) {
+            taskInfo = this.taskBO.getCompletedTaskDetail(guestTaskId, userId); 
+        } else {
+            taskInfo = this.taskBO.getTaskIfUserNull(guestTaskId);
         }
 
         if (taskInfo != null) {
             taskStatus = taskInfo.getStatus();
-            docxPathFromDb = taskInfo.getDocxPath();
-            request.setAttribute("taskDetails", taskInfo);
-            if (taskInfo.getPdfName() != null) {
-                session.setAttribute("uploadedFileName", taskInfo.getPdfName());
+            String docxPathFromDb = taskInfo.getDocxPath();
+            if (taskStatus.equals("DONE") && docxPathFromDb != null) {
+                session.setAttribute("guest_docxPath", docxPathFromDb); 
             }
+            
+            request.setAttribute("taskDetails", taskInfo);
         }
 
-        if (docxPathFromDb != null) {
-            session.setAttribute("guest_docxPath", docxPathFromDb);
-            guestDocxPath = docxPathFromDb;
-        }
-
-        if (taskStatus == null && guestDocxPath != null) {
+        if (taskStatus.equals("UNKNOWN") && guestDocxPath != null) {
             taskStatus = "DONE";
         }
 
-        boolean isProcessing = "PROCESSING".equalsIgnoreCase(taskStatus);
-        boolean isDone = "DONE".equalsIgnoreCase(taskStatus) && guestDocxPath != null;
-        boolean canShowConvertButton = (guestTaskId == null) || (!isProcessing && !isDone);
+        boolean isProcessing = "PROCESSING".equalsIgnoreCase(taskStatus) || "PENDING".equalsIgnoreCase(taskStatus);
+        boolean isDone = "DONE".equalsIgnoreCase(taskStatus);
+        boolean canShowConvertButton = !isProcessing && !isDone;
+        if (taskStatus.equals("UNKNOWN") || taskStatus.equals("FAILED")) {
+            canShowConvertButton = true;
+        }
 
         request.setAttribute("taskStatus", taskStatus);
         request.setAttribute("isProcessing", isProcessing);
         request.setAttribute("isDone", isDone);
         request.setAttribute("canShowConvertButton", canShowConvertButton);
+        request.getRequestDispatcher("/convert.jsp").forward(request, response);
     }
 }
 

@@ -21,6 +21,7 @@ public class TaskBO {
         return task.orElse(null);
     }
     public Task getTaskIfUserNull(int taskId) {
-        return taskDAO.getTaskIfUserNull(taskId);
+        Optional<Task> task = taskDAO.getTaskIfUserNull(taskId);
+        return task.orElse(null);
     }
 }
