@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DBConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/pdf_converter?useSSL=false&useUnicode=true&characterEncoding=UTF-8";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String USER = "admin";
+    private static final String PASSWORD = "admin123";
 
     static {
         try {
