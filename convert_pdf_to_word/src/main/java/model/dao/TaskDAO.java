@@ -39,7 +39,7 @@ public class TaskDAO {
         return -1;
     }
 
-    public Task getTaskIfUserNull(int taskId) {
+    public Optional<Task> getTaskIfUserNull(int taskId) {
         String sql = "SELECT * FROM tasks WHERE id = ? AND user_id IS NULL";
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -52,12 +52,12 @@ public class TaskDAO {
                 t.setPdfPath(rs.getString("pdf_path"));
                 t.setDocxPath(rs.getString("docx_path"));
                 t.setStatus(rs.getString("status"));
-                return t;
+                return Optional.of(t);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return Optional.empty();
     }
 
     public List<Task> getTasksByUserId(int userId) {
